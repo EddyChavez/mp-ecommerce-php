@@ -1,3 +1,45 @@
+<?php
+// SDK de Mercado Pago
+require __DIR__ .  '/vendor/autoload.php';
+
+// Agrega credenciales
+MercadoPago\SDK::setAccessToken('APP_USR-1159009372558727-072921-8d0b9980c7494985a5abd19fbe921a3d-617633181');
+
+// Crea un objeto de preferencia
+$preference = new MercadoPago\Preference();
+
+// Crea un ítem en la preferencia
+$item = new MercadoPago\Item();
+$item->id = '1234';
+$item->title = $_POST['title'];
+$item->quantity = $_POST['unit'];
+$item->unit_price = $_POST['price'];
+$item->norder = 'eddychavezba@gmail.com';
+$preference->items = array($item);
+// Crea el payer
+$payer = new MercadoPago\Payer();
+$payer->name = "Lalo";
+$payer->surname = "Landa";
+$payer->email = "test_user_58295862@testuser.com";
+$payer->phone = array(
+"area_code" => "52",
+"number" => "5549737300"
+);
+
+$payer->address = array(
+"street_name" => "Insurgentes Sur",
+"street_number" => 1602,
+"zip_code" => "03940"
+);
+// Medios de pago
+$preference->payment_methods = array(
+    "excluded_payment_methods" => array( array("id"=>"amex")),	
+    "excluded_payment_types" => array( array("id" => "atm")),
+    "installments" => 6
+  );
+$preference->notification_url = "http://localhost/mp-ecommerce-php/notificacion.php" ;
+$preference->save();
+?>
 <!DOCTYPE html>
 <html class="supports-animation supports-columns svg no-touch no-ie no-oldie no-ios supports-backdrop-filter as-mouseuser" lang="en-US"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
@@ -124,13 +166,18 @@
                                             </h3>
                                         </div>
                                         <h3 >
-                                            <?php echo $_POST['price'] ?>
+                                            <?php echo "Precio $" . $_POST['price'] ?>
                                         </h3>
                                         <h3 >
-                                            <?php echo "$" . $_POST['unit'] ?>
+                                            <?php echo "Cantidad " . $_POST['unit'] ?>
                                         </h3>
                                     </div>
-                                    <button type="submit" class="mercadopago-button" formmethod="post">Pagar</button>
+                                    <!-- <form action="" method="POST">
+                                        <script src="https://www.mercadopago.com.mx/integrations/v1/web-payment-checkout.js"
+                                            data-preference-id="<?php echo $preference->id; ?>">
+                                        </script>
+                                    </form> -->
+                                    <a href="<?php echo $preference->init_point; ?>">Pagar con Mercado Pago</a>
                                 </div>
                             </div>
                         </div>
